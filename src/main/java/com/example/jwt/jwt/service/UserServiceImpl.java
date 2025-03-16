@@ -18,28 +18,31 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
+
     @Override
     public User saveUser(User user) {
-        return null;
+        return userRepo.save(user);
     }
 
     @Override
     public Role saveRole(Role role) {
-        return null;
+        return roleRepo.save(role);
     }
 
     @Override
     public void addRoleToUser(String userName, String roleName) {
-
+        User user = userRepo.findByName(userName);
+        Role role = roleRepo.findByName(roleName);
+        user.getRoles().add(role);
     }
 
     @Override
     public User getUser(String userName) {
-        return null;
+        return userRepo.findByName(userName);
     }
 
     @Override
     public List<User> getUser() {
-        return List.of();
+        return userRepo.findAll();
     }
 }
