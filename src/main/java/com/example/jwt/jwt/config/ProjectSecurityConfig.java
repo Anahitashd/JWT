@@ -49,6 +49,7 @@ public class ProjectSecurityConfig {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
+
     /**
      * From Spring Security 6.3
      * @return
