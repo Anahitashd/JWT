@@ -21,18 +21,20 @@ public class ProjectSecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 //        http.authorizeHttpRequests((requests) -> ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)requests.anyRequest()).permitAll());
 //        http.authorizeHttpRequests((requests) -> ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)requests.anyRequest()).denyAll());
-        http.authorizeHttpRequests((requests) ->{
-            requests
-                    .requestMatchers("myAccount","myBalance","myLoans","myCards").authenticated()
-                    .requestMatchers("/notices","/contact","error ").permitAll();
-        });
+        http.csrf(csrfConfig -> csrfConfig.disable())
+                .authorizeHttpRequests((requests) -> {
+                    requests
+                            .requestMatchers("myAccount", "myBalance", "myLoans", "myCards").authenticated()
+                            .requestMatchers("/notices", "/contact", "error", "/register").permitAll();
+                });
         http.formLogin(Customizer.withDefaults());
         http.httpBasic(Customizer.withDefaults());
-        return (SecurityFilterChain)http.build();
+        return (SecurityFilterChain) http.build();
     }
 
     @Bean
-    public UserDetailsService userDetailsService(DataSource dataSource){
+    public UserDetailsService userDetailsService(DataSource dataSource) {
+
 //        For saving in memory
 //        UserDetails user= User.withUsername("user")
 //                .password("{noop}AnahitaShd@12345")
@@ -40,22 +42,29 @@ public class ProjectSecurityConfig {
 //        UserDetails admin= User.withUsername("admin")
 //                .password("{bcrypt}$2a$12$gCbKELf3hdvIo6CeKR8JZ.xwXXfgn4gig1y8eT9SgCGL0bpN6zw4m")
 //                .authorities("admin").build();
+
         return new JdbcUserDetailsManager(dataSource);
     }
 
+//    @Bean
+//    public UserDetailsService userDetailsService(DataSource dataSource){
+//        return new JdbcUserDetailsManager(dataSource);
+//    }
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
 
     /**
      * From Spring Security 6.3
+     *
      * @return
      */
 
     @Bean
-    public CompromisedPasswordChecker compromisedPasswordChecker(){
+    public CompromisedPasswordChecker compromisedPasswordChecker() {
         return new HaveIBeenPwnedRestApiPasswordChecker();
     }
 }
