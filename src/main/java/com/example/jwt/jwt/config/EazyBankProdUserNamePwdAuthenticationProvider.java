@@ -1,7 +1,6 @@
 package com.example.jwt.jwt.config;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Comment;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,12 +12,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-
 @Component
-@Profile("!prod")
+@Profile("prod")
 @RequiredArgsConstructor
-public class EazyBankUserNamePwdAuthenticationProvider implements AuthenticationProvider {
+public class EazyBankProdUserNamePwdAuthenticationProvider implements AuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
@@ -28,7 +25,11 @@ public class EazyBankUserNamePwdAuthenticationProvider implements Authentication
         String username=authentication.getName();
         String pwd=authentication.getCredentials().toString();
         UserDetails userDetails=userDetailsService.loadUserByUsername(username);
+        if(passwordEncoder.matches(pwd,userDetails.getPassword())){
             return new UsernamePasswordAuthenticationToken(username,pwd,userDetails.getAuthorities());
+        }else {
+            throw new BadCredentialsException("Invalid password");
+        }
     }
 
 
