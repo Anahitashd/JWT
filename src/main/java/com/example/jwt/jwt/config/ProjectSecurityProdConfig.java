@@ -23,7 +23,8 @@ public class ProjectSecurityProdConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 //        http.authorizeHttpRequests((requests) -> ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)requests.anyRequest()).permitAll());
 //        http.authorizeHttpRequests((requests) -> ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)requests.anyRequest()).denyAll());
-        http.csrf(csrfConfig -> csrfConfig.disable())
+        http.requiresChannel(rcc -> rcc.anyRequest().requiresSecure()) // Only HTTPS
+                .csrf(csrfConfig -> csrfConfig.disable())
                 .authorizeHttpRequests((requests) -> {
                     requests
                             .requestMatchers("myAccount", "myBalance", "myLoans", "myCards").authenticated()
