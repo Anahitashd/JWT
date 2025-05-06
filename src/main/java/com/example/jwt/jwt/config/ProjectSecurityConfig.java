@@ -1,5 +1,6 @@
 package com.example.jwt.jwt.config;
 
+import com.example.jwt.jwt.exceptionhandling.CustomBasicAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -29,7 +30,7 @@ public class ProjectSecurityConfig {
                             .requestMatchers("/notices", "/contact", "error", "/register").permitAll();
                 });
         http.formLogin(Customizer.withDefaults());
-        http.httpBasic(Customizer.withDefaults());
+        http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
         return (SecurityFilterChain) http.build();
     }
 
@@ -57,12 +58,6 @@ public class ProjectSecurityConfig {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-
-    /**
-     * From Spring Security 6.3
-     *
-     * @return
-     */
 
     @Bean
     public CompromisedPasswordChecker compromisedPasswordChecker() {
