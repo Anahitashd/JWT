@@ -1,5 +1,6 @@
 package com.example.jwt.jwt.config;
 
+import com.example.jwt.jwt.exceptionhandling.CustomAccessDeniedHandler;
 import com.example.jwt.jwt.exceptionhandling.CustomBasicAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +32,7 @@ public class ProjectSecurityConfig {
                 });
         http.formLogin(Customizer.withDefaults());
         http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
-        http.exceptionHandling(ehc -> ehc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
+        http.exceptionHandling(ehc -> ehc.accessDeniedHandler(new CustomAccessDeniedHandler()));
         return (SecurityFilterChain) http.build();
     }
 
