@@ -31,6 +31,7 @@ public class ProjectSecurityConfig {
                 });
         http.formLogin(Customizer.withDefaults());
         http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
+        http.exceptionHandling(ehc -> ehc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
         return (SecurityFilterChain) http.build();
     }
 
