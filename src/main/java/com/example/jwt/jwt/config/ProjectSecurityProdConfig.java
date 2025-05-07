@@ -25,13 +25,14 @@ public class ProjectSecurityProdConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 //        http.authorizeHttpRequests((requests) -> ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)requests.anyRequest()).permitAll());
 //        http.authorizeHttpRequests((requests) -> ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)requests.anyRequest()).denyAll());
-        http.requiresChannel(rcc -> rcc.anyRequest().requiresSecure()) // Only HTTPS
+
+        http
+                .sessionManagement((smc -> smc.invalidSessionUrl("/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true)))
+                .requiresChannel(rcc -> rcc.anyRequest().requiresSecure()) // Only HTTPS
                 .csrf(csrfConfig -> csrfConfig.disable())
-                .authorizeHttpRequests((requests) -> {
-                    requests
-                            .requestMatchers("myAccount", "myBalance", "myLoans", "myCards").authenticated()
-                            .requestMatchers("/notices", "/contact", "error", "/register").permitAll();
-                });
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("myAccount", "myBalance", "myLoans", "myCards").authenticated()
+                        .requestMatchers("/notices", "/contact", "error", "/register","/invalidSession").permitAll());
         http.formLogin(Customizer.withDefaults());
         http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
         http.exceptionHandling(ehc -> ehc.accessDeniedHandler(new CustomAccessDeniedHandler()));
